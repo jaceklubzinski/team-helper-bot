@@ -1,0 +1,6 @@
+version: '2.0'
+services:
+  team-helper-bot:
+    image: jlubzinski/team-helper-bot:latest
+    environment:
+      HELPERBOT_SLACK_AUTH_TOKEN:
