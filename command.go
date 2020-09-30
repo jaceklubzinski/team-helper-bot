@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"math/rand"
 	"strings"
 
@@ -22,6 +21,7 @@ func getRandomColor() string {
 func (s *slackClient) command(msg slack.Msg) error {
 	botCommand := map[string]string{
 		"add":  "add problem with possible solution\n examples\nshort : `@bot add sources.LazyJDBCSource http://github.com`\n long: `@bot add \"ProxySQL Error: Access denied for user\" \"recreate container\"`",
+		"del":  "del single row\n example: `@bot del \"single row\"`",
 		"list": "list all problems and solutions",
 		"fix":  "Delete all problems",
 		"help": "Help message",
@@ -73,8 +73,7 @@ func (s *slackClient) command(msg slack.Msg) error {
 					description = description + " " + commandParameters[i]
 				}
 			}
-			fmt.Println("Title: ", title)
-			fmt.Println("Description: ", description)
+
 			if _, ok := hellperMessages[title]; !ok {
 				err := s.db.addRow(title, description)
 				if err != nil {
@@ -82,6 +81,21 @@ func (s *slackClient) command(msg slack.Msg) error {
 				}
 				hellperMessages[title] = description
 				s.simpleMsg(msg, ":thumbsup: Thanks for support. This problem will not bother anymore!")
+			}
+		case "del":
+			if len(commandParametersLong) < 2 {
+				s.simpleMsg(msg, ":niedobrze: Not enough number of parameters. Try `help` command")
+				return errors.New("Not enough number of parameter")
+			}
+			title := commandParametersLong[1]
+
+			if _, ok := hellperMessages[title]; ok {
+				err := s.db.deleteRow(title)
+				if err != nil {
+					return err
+				}
+				delete(hellperMessages, title)
+				s.simpleMsg(msg, ":thumbsup: Problem fixed")
 			}
 		case "list":
 

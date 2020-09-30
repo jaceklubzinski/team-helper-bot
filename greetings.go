@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"strings"
 
 	"github.com/slack-go/slack"
 )
@@ -49,8 +50,8 @@ func (s *slackClient) greetings(msg slack.Msg) error {
 		"pig_hello_door",
 		"pikachu-hello",
 	}
-
-	if slackGreetings[msg.Text] {
+	greetingsWord := strings.Split(msg.Text, " ")
+	if slackGreetings[greetingsWord[0]] {
 		i := rand.Intn(len(slackGreetingsEmoji))
 		// Grab a reference to the message.
 		msgRef := slack.NewRefToMessage(msg.Channel, msg.Timestamp)

@@ -42,6 +42,18 @@ func (d *store) deleteAll() error {
 	return nil
 }
 
+func (d *store) deleteRow(title string) error {
+	stmt, err := d.db.Prepare("DELETE FROM helper where title=?")
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(title)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (d *store) addRow(title, desc string) error {
 	stmt, err := d.db.Prepare("REPLACE INTO helper(title,description) values(?,?)")
 	if err != nil {

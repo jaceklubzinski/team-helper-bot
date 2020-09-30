@@ -4,3 +4,5 @@ services:
     image: jlubzinski/team-helper-bot:latest
     environment:
       HELPERBOT_SLACK_AUTH_TOKEN:
+    volumes:
+     - /srv/helperbot.db:helperbot.db 
