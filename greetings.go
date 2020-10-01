@@ -20,6 +20,7 @@ func (s *slackClient) greetings(msg slack.Msg) error {
 		"ahoj":     true,
 		"joł":      true,
 		"howgh":    true,
+		"czołem":   true,
 	}
 
 	slackGreetingsEmoji := []string{
