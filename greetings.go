@@ -51,7 +51,7 @@ func (s *slackClient) greetings(msg slack.Msg) error {
 		"pig_hello_door",
 		"pikachu-hello",
 	}
-	greetingsWord := strings.Split(msg.Text, " ")
+	greetingsWord := strings.Split(strings.ToLower(msg.Text), " ")
 	if slackGreetings[greetingsWord[0]] {
 		i := rand.Intn(len(slackGreetingsEmoji))
 		// Grab a reference to the message.
