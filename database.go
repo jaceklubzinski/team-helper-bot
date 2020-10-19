@@ -10,10 +10,10 @@ type store struct {
 	db *sql.DB
 }
 
-func newRepository(db *sql.DB) *store {
+func newDB(db *sql.DB) *store {
 	return &store{db}
 }
-func connectDatabase() (*sql.DB, error) {
+func connectDB() (*sql.DB, error) {
 	return sql.Open("sqlite3", "helperbot.db")
 }
 
