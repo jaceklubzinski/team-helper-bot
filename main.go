@@ -22,16 +22,18 @@ func main() {
 		fmt.Println(err.Error())
 	}
 
-	db, err := connectDatabase()
+	dbClient, err := connectDB()
+	if err != nil {
+		fmt.Println("Can't create database connection")
+	}
+	db := newDB(dbClient)
+	err = db.createTable()
 	if err != nil {
 		fmt.Println("Can't create helper table")
 	}
-	repo := newRepository(db)
-	err = repo.createTable()
-	if err != nil {
-		fmt.Println("Can't create helper table")
-	}
-	err = repo.getRow()
+
+	//
+	err = db.getRow()
 	if err != nil {
 		fmt.Println("Can't get rows from helper table")
 	}
@@ -43,7 +45,7 @@ func main() {
 	)
 
 	rtm := api.NewRTM()
-	s := newSlackClient(rtm, repo)
+	s := newSlackClient(rtm, db)
 	go s.slack.ManageConnection()
 
 	for msg := range s.slack.IncomingEvents {

@@ -27,10 +27,11 @@ func (s *slackClient) command(msg slack.Msg) error {
 		"help": "Help message",
 	}
 
+	//
 	if strings.Contains(msg.Text, "@"+s.slack.GetInfo().User.ID) {
-		commandParameters := strings.Split(msg.Text, " ")
-		commandParametersLong := strings.Split(msg.Text, "\"")
-		switch commandParameters[1] {
+		commandParam := strings.Split(msg.Text, " ")
+		commandParamLong := strings.Split(msg.Text, "\"")
+		switch commandParam[1] {
 		case "help":
 			fields := make([]slack.AttachmentField, 0)
 
@@ -54,23 +55,25 @@ func (s *slackClient) command(msg slack.Msg) error {
 		case "add":
 			var description string
 
-			//default index
-			titleI := 2
-			descriptionI := 3
-			if len(commandParametersLong) > 2 {
-				commandParameters = commandParametersLong
-				titleI = 1
-				descriptionI = 2
+			titleI := 2       //default index for value
+			descriptionI := 3 //default index for description
+
+			//if command params are using " " use long format
+			if len(commandParamLong) > 2 {
+				commandParam = commandParamLong
+				titleI = 1       //long param default index for value
+				descriptionI = 2 //long param default index for description
 			}
 
-			if len(commandParameters) < 4 {
+			if len(commandParam) < 4 {
 				s.simpleMsg(msg, ":niedobrze: Not enough number of parameters. Try `help` command")
 				return errors.New("Not enough number of parameter")
 			}
-			title := commandParameters[titleI]
-			if len(commandParameters) > 2 {
-				for i := descriptionI; i < len(commandParameters); i++ {
-					description = description + " " + commandParameters[i]
+
+			title := commandParam[titleI]
+			if len(commandParam) > 2 {
+				for i := descriptionI; i < len(commandParam); i++ {
+					description = description + " " + commandParam[i]
 				}
 			}
 
@@ -82,12 +85,14 @@ func (s *slackClient) command(msg slack.Msg) error {
 				hellperMessages[title] = description
 				s.simpleMsg(msg, ":thumbsup: Thanks for support. This problem will not bother anymore!")
 			}
+
 		case "del":
-			if len(commandParametersLong) < 2 {
+			if len(commandParamLong) < 2 {
 				s.simpleMsg(msg, ":niedobrze: Not enough number of parameters. Try `help` command")
 				return errors.New("Not enough number of parameter")
 			}
-			title := commandParametersLong[1]
+
+			title := commandParamLong[1]
 
 			if _, ok := hellperMessages[title]; ok {
 				err := s.db.deleteRow(title)

@@ -16,11 +16,16 @@ func (s *slackClient) greetings(msg slack.Msg) error {
 		"witam":    true,
 		"siema":    true,
 		"siemka":   true,
+		"siemanko": true,
+		"siemano":  true,
 		"bonjorno": true,
 		"ahoj":     true,
 		"joł":      true,
 		"howgh":    true,
 		"czołem":   true,
+		"czesc":    true,
+		"cześć":    true,
+		"elo":      true,
 	}
 
 	slackGreetingsEmoji := []string{
@@ -51,7 +56,9 @@ func (s *slackClient) greetings(msg slack.Msg) error {
 		"pig_hello_door",
 		"pikachu-hello",
 	}
+
 	greetingsWord := strings.Split(strings.ToLower(msg.Text), " ")
+
 	if slackGreetings[greetingsWord[0]] {
 		i := rand.Intn(len(slackGreetingsEmoji))
 		// Grab a reference to the message.
