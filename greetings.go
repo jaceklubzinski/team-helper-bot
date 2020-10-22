@@ -1,15 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 	"strings"
-
-	"github.com/slack-go/slack"
 )
 
 //greetings add slack reaction response to greetings
-func (s *slackClient) greetings(msg slack.Msg) error {
+func greetings(msg string) string {
 	slackGreetings := map[string]bool{
 		"hej":      true,
 		"hello":    true,
@@ -57,16 +54,11 @@ func (s *slackClient) greetings(msg slack.Msg) error {
 		"pikachu-hello",
 	}
 
-	greetingsWord := strings.Split(strings.ToLower(msg.Text), " ")
+	greetingsWord := strings.Split(strings.ToLower(msg), " ")
 
 	if slackGreetings[greetingsWord[0]] {
 		i := rand.Intn(len(slackGreetingsEmoji))
-		// Grab a reference to the message.
-		msgRef := slack.NewRefToMessage(msg.Channel, msg.Timestamp)
-		if err := s.slack.AddReaction(slackGreetingsEmoji[i], msgRef); err != nil {
-			fmt.Printf("Error adding reaction: %s", err)
-			return err
-		}
+		return slackGreetingsEmoji[i]
 	}
-	return nil
+	return ""
 }

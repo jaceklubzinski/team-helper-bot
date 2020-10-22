@@ -63,19 +63,25 @@ func main() {
 			}
 
 			//bot command with mention
-			err := s.command(msg)
-			if err != nil {
-				fmt.Println("Can't execute bot command")
-			}
-			//catch-all reaction respons to greetings
-			err = s.greetings(msg)
-			if err != nil {
-				fmt.Println("Can't add reaction")
-			}
+			if strings.Contains(msg.Text, "@"+s.slack.GetInfo().User.ID) {
+				err := s.command(msg)
+				if err != nil {
+					fmt.Println("Can't execute bot command")
+				}
+			} else {
+				//catch-all reaction to response to greetings
+				if emoji := greetings(msg.Text); emoji != "" {
+					err = s.reaction(msg, emoji)
+					if err != nil {
+						fmt.Println("Can't add reaction")
+					}
+				}
 
-			//catch-all response to popular problems
-			s.hellper(msg)
-
+				//catch-all response to popular problems
+				if match := helper(msg.Text); match != "" {
+					s.simpleMsg(msg, match)
+				}
+			}
 		case *slack.ConnectedEvent:
 			fmt.Println("Connected to Slack")
 
