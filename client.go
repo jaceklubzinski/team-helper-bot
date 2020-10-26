@@ -17,6 +17,15 @@ func newSlackClient(client *slack.RTM, db *store) *slackClient {
 	return &slackClient{slack: client, db: db}
 }
 
+func (s *slackClient) reaction(m slack.Msg, r string) error {
+	// Grab a reference to the message.
+	msgRef := slack.NewRefToMessage(m.Channel, m.Timestamp)
+	if err := s.slack.AddReaction(r, msgRef); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *slackClient) simpleMsg(msg slack.Msg, text string) {
 	// Create a response object.
 	resp := s.slack.NewOutgoingMessage(text, msg.Channel)
