@@ -25,11 +25,11 @@ func getRandomColor() string {
 //params manage bot reponse for slack params
 func (c *command) params(msg slack.Msg) error {
 	botCommand := map[string]string{
-		"add":  "add problem with possible solution\n examples\nshort : `@bot add sources.LazyJDBCSource http://github.com`\n long: `@bot add \"ProxySQL Error: Access denied for user\" \"recreate container\"`",
-		"del":  "del single row\n example: `@bot del \"single row\"`",
-		"list": "list all problems and solutions",
-		"fix":  "Delete all problems",
-		"help": "Help message",
+		"add":     "add problem with possible solution\n examples\nshort : `@bot add sources.LazyJDBCSource http://github.com`\n long: `@bot add \"ProxySQL Error: Access denied for user\" \"recreate container\"`",
+		"del":     "del single row\n example: `@bot del \"single row\"`",
+		"list":    "list all problems and solutions",
+		"fix-all": "Delete all problems",
+		"help":    "Help message",
 	}
 
 	commandParam := strings.Split(msg.Text, " ")
@@ -125,7 +125,7 @@ func (c *command) params(msg slack.Msg) error {
 			return err
 		}
 
-	case "fix":
+	case "fix-all":
 		err := c.db.deleteAll()
 		if err != nil {
 			return err
