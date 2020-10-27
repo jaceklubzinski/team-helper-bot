@@ -9,12 +9,17 @@ import (
 //slackClient to manage slack connections
 type slackClient struct {
 	slack *slack.RTM
-	db    *store
+}
+
+type slacker interface {
+	reaction(m slack.Msg, r string) error
+	simpleMsg(msg slack.Msg, text string)
+	postMsg(msg slack.Msg, attachment slack.Attachment) error
 }
 
 //newSlackClient constructor for new client
-func newSlackClient(client *slack.RTM, db *store) *slackClient {
-	return &slackClient{slack: client, db: db}
+func newSlackClient(client *slack.RTM) *slackClient {
+	return &slackClient{slack: client}
 }
 
 func (s *slackClient) reaction(m slack.Msg, r string) error {

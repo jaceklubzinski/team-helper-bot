@@ -10,6 +10,14 @@ type store struct {
 	db *sql.DB
 }
 
+type storer interface {
+	createTable() error
+	deleteAll() error
+	deleteRow(title string) error
+	addRow(title, desc string) error
+	getRow() error
+}
+
 func newDB(db *sql.DB) *store {
 	return &store{db}
 }

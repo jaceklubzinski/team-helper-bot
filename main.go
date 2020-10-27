@@ -45,8 +45,10 @@ func main() {
 	)
 
 	rtm := api.NewRTM()
-	s := newSlackClient(rtm, db)
+	s := newSlackClient(rtm)
 	go s.slack.ManageConnection()
+
+	commands := command{db, s}
 
 	for msg := range s.slack.IncomingEvents {
 		switch ev := msg.Data.(type) {
@@ -64,7 +66,7 @@ func main() {
 
 			//bot command with mention
 			if strings.Contains(msg.Text, "@"+s.slack.GetInfo().User.ID) {
-				err := s.command(msg)
+				err := commands.params(msg)
 				if err != nil {
 					fmt.Println("Can't execute bot command")
 				}
