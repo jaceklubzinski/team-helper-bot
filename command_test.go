@@ -9,6 +9,7 @@ import (
 
 type mockDB struct{}
 
+//nolint:deadcode,unused
 type MockStorer interface {
 	createTable() error
 	deleteAll() error
@@ -39,6 +40,7 @@ func (d *mockDB) getRow() error {
 
 type mockSlackClient struct{}
 
+//nolint:deadcode,unused
 type mockSlacker interface {
 	reaction(m slack.Msg, r string) error
 	simpleMsg(msg slack.Msg, text string)
