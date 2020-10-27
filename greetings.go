@@ -10,6 +10,7 @@ func greetings(msg string) string {
 	slackGreetings := map[string]bool{
 		"hej":      true,
 		"hello":    true,
+		"hejo":     true,
 		"witam":    true,
 		"siema":    true,
 		"siemka":   true,
@@ -22,6 +23,7 @@ func greetings(msg string) string {
 		"czołem":   true,
 		"czesc":    true,
 		"cześć":    true,
+		"cze":      true,
 		"elo":      true,
 	}
 
