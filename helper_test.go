@@ -8,6 +8,8 @@ import (
 
 func TestHelper(t *testing.T) {
 	var problemHelper helper
+	problemHelper.message = make(map[string]string)
+
 	title := "TestTitle"
 	desc := "TestDesc"
 	problemHelper.message[title] = desc

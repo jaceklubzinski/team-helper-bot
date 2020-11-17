@@ -16,6 +16,7 @@ type envConfig struct {
 
 func runDB() (helper, *store) {
 	var problemHelper helper
+	problemHelper.message = make(map[string]string)
 
 	dbClient, err := connectDB()
 	if err != nil {

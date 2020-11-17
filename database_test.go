@@ -108,6 +108,7 @@ func TestAddRow(t *testing.T) {
 
 func TestGetRow(t *testing.T) {
 	var problemHelper helper
+	problemHelper.message = make(map[string]string)
 
 	dbClient, mock, err := sqlmock.New()
 	if err != nil {

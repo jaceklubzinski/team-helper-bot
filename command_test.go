@@ -61,6 +61,7 @@ func (c *mockSlackClient) postMsg(msg slack.Msg, attachment slack.Attachment) er
 
 func TestCommands(t *testing.T) {
 	var problemHelper helper
+	problemHelper.message = make(map[string]string)
 
 	db := &mockDB{}
 	slackClient := &mockSlackClient{}
