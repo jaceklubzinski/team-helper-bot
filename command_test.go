@@ -60,9 +60,11 @@ func (c *mockSlackClient) postMsg(msg slack.Msg, attachment slack.Attachment) er
 }
 
 func TestCommands(t *testing.T) {
+	var problemHelper helper
+
 	db := &mockDB{}
 	slackClient := &mockSlackClient{}
-	commands := command{db, slackClient}
+	commands := command{db, slackClient, problemHelper}
 
 	// help command
 	msg := slack.Msg{
@@ -90,7 +92,7 @@ func TestCommands(t *testing.T) {
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when parse add short bot command", err)
 	}
-	assert.Equal(t, "Long Desc", hellperMessages["Long Test"])
+	assert.Equal(t, "Long Desc", problemHelper.message["Long Test"])
 
 	// add command not enough parameters
 	msg = slack.Msg{
@@ -102,7 +104,7 @@ func TestCommands(t *testing.T) {
 	}
 
 	// del command
-	hellperMessages["TestDel"] = "Delete"
+	problemHelper.message["TestDel"] = "Delete"
 	msg = slack.Msg{
 		Text: "@bot del \"TestDel\"",
 	}
@@ -110,7 +112,7 @@ func TestCommands(t *testing.T) {
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when parse del bot command", err)
 	}
-	assert.NotEqual(t, "Delete", hellperMessages["TestDel"])
+	assert.NotEqual(t, "Delete", problemHelper.message["TestDel"])
 
 	// del command not enough parameters
 	msg = slack.Msg{
@@ -122,8 +124,8 @@ func TestCommands(t *testing.T) {
 	}
 
 	// fix command
-	hellperMessages["Fix1"] = "Delete"
-	hellperMessages["Fix2"] = "Delete"
+	problemHelper.message["Fix1"] = "Delete"
+	problemHelper.message["Fix2"] = "Delete"
 	msg = slack.Msg{
 		Text: "@bot fix",
 	}
@@ -131,6 +133,6 @@ func TestCommands(t *testing.T) {
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when parse del bot command", err)
 	}
-	assert.NotEqual(t, "Delete", hellperMessages["fix1"])
-	assert.NotEqual(t, "Delete", hellperMessages["fix2"])
+	assert.NotEqual(t, "Delete", problemHelper.message["fix1"])
+	assert.NotEqual(t, "Delete", problemHelper.message["fix2"])
 }

@@ -14,6 +14,36 @@ type envConfig struct {
 	SlackAuthToken string `required:"true" split_words:"true"`
 }
 
+func runDB() (helper, *store) {
+	var problemHelper helper
+
+	dbClient, err := connectDB()
+	if err != nil {
+		log.Fatalf("Can't create database connection: %v", err)
+	}
+	db := newDB(dbClient, problemHelper)
+	err = db.createTable()
+	if err != nil {
+		log.Fatalf("Can't create helper table: %v", err)
+	}
+	err = db.getRow()
+	if err != nil {
+		log.Fatalf("Can't get rows from helper table: %v", err)
+	}
+	return problemHelper, db
+}
+
+func runSlack(env envConfig) *slackClient {
+	api := slack.New(
+		env.SlackAuthToken,
+		slack.OptionDebug(false),
+		slack.OptionLog(log.New(os.Stdout, "slack-bot: ", log.Lshortfile|log.LstdFlags)),
+	)
+
+	rtm := api.NewRTM()
+	return newSlackClient(rtm)
+}
+
 func main() {
 	var env envConfig
 
@@ -22,33 +52,12 @@ func main() {
 		fmt.Println(err.Error())
 	}
 
-	dbClient, err := connectDB()
-	if err != nil {
-		fmt.Println("Can't create database connection")
-	}
-	db := newDB(dbClient)
-	err = db.createTable()
-	if err != nil {
-		fmt.Println("Can't create helper table")
-	}
+	problemHelper, db := runDB()
 
-	//
-	err = db.getRow()
-	if err != nil {
-		fmt.Println("Can't get rows from helper table")
-	}
-
-	api := slack.New(
-		env.SlackAuthToken,
-		slack.OptionDebug(false),
-		slack.OptionLog(log.New(os.Stdout, "slack-bot: ", log.Lshortfile|log.LstdFlags)),
-	)
-
-	rtm := api.NewRTM()
-	s := newSlackClient(rtm)
+	s := runSlack(env)
 	go s.slack.ManageConnection()
 
-	commands := command{db, s}
+	commands := command{db, s, problemHelper}
 
 	for msg := range s.slack.IncomingEvents {
 		switch ev := msg.Data.(type) {
@@ -80,7 +89,7 @@ func main() {
 				}
 
 				//catch-all response to popular problems
-				if match := helper(msg.Text); match != "" {
+				if match := problemHelper.match(msg.Text); match != "" {
 					s.simpleMsg(msg, match)
 				}
 			}

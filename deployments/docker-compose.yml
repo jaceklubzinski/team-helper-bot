@@ -5,4 +5,4 @@ services:
     environment:
       HELPERBOT_SLACK_AUTH_TOKEN:
     volumes:
-     - /srv/helperbot.db:helperbot.db 
+     - /srv/helperbot.db:/app/db/helperbot.db 
