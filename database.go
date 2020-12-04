@@ -8,6 +8,7 @@ import (
 
 type store struct {
 	db *sql.DB
+	helper
 }
 
 type storer interface {
@@ -18,11 +19,11 @@ type storer interface {
 	getRow() error
 }
 
-func newDB(db *sql.DB) *store {
-	return &store{db}
+func newDB(db *sql.DB, msg helper) *store {
+	return &store{db, msg}
 }
 func connectDB() (*sql.DB, error) {
-	return sql.Open("sqlite3", "helperbot.db")
+	return sql.Open("sqlite3", "/app/db/helperbot.db")
 }
 
 func (d *store) createTable() error {
@@ -85,8 +86,8 @@ func (d *store) getRow() error {
 		if err != nil {
 			return err
 		}
-		if _, ok := hellperMessages[title]; !ok {
-			hellperMessages[title] = desc
+		if _, ok := d.helper.message[title]; !ok {
+			d.helper.message[title] = desc
 		}
 	}
 	return nil

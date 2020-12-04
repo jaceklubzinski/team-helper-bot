@@ -7,11 +7,14 @@ import (
 )
 
 func TestHelper(t *testing.T) {
+	var problemHelper helper
+	problemHelper.message = make(map[string]string)
+
 	title := "TestTitle"
 	desc := "TestDesc"
-	hellperMessages[title] = desc
+	problemHelper.message[title] = desc
 
-	match := helper(title)
+	match := problemHelper.match(title)
 
 	assert.Equal(t, match, desc)
 }

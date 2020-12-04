@@ -11,6 +11,7 @@ import (
 type command struct {
 	db    storer
 	slack slacker
+	helper
 }
 
 func getRandomColor() string {
@@ -36,7 +37,7 @@ func (c *command) params(msg slack.Msg) error {
 	commandParamLong := strings.Split(msg.Text, "\"")
 	switch commandParam[1] {
 	case "help":
-		fields := make([]slack.AttachmentField, 0)
+		fields := make([]slack.AttachmentField, 0, len(botCommand))
 
 		for k, v := range botCommand {
 			fields = append(fields, slack.AttachmentField{
@@ -58,14 +59,14 @@ func (c *command) params(msg slack.Msg) error {
 	case "add":
 		var description string
 
-		titleI := 2       //default index for value
-		descriptionI := 3 //default index for description
+		titleIndex := 2       //default index for value
+		descriptionIndex := 3 //default index for description
 
 		//if command params are using " " use long format
 		if len(commandParamLong) > 2 {
 			commandParam = commandParamLong
-			titleI = 1       //long param default index for value
-			descriptionI = 3 //long param default index for description
+			titleIndex = 1       //long param default index for value
+			descriptionIndex = 3 //long param default index for description
 		}
 
 		if len(commandParam) < 4 {
@@ -73,15 +74,15 @@ func (c *command) params(msg slack.Msg) error {
 			return errors.New("Not enough number of parameter")
 		}
 
-		title := commandParam[titleI]
-		description = commandParam[descriptionI]
+		title := commandParam[titleIndex]
+		description = commandParam[descriptionIndex]
 
-		if _, ok := hellperMessages[title]; !ok {
+		if _, ok := c.message[title]; !ok {
 			err := c.db.addRow(title, description)
 			if err != nil {
 				return err
 			}
-			hellperMessages[title] = description
+			c.message[title] = description
 			c.slack.simpleMsg(msg, ":thumbsup: Thanks for support. This problem will not bother anymore!")
 		}
 
@@ -93,12 +94,12 @@ func (c *command) params(msg slack.Msg) error {
 
 		title := commandParamLong[1]
 
-		if _, ok := hellperMessages[title]; ok {
+		if _, ok := c.message[title]; ok {
 			err := c.db.deleteRow(title)
 			if err != nil {
 				return err
 			}
-			delete(hellperMessages, title)
+			delete(c.message, title)
 			c.slack.simpleMsg(msg, ":thumbsup: Problem fixed")
 		}
 	case "list":
@@ -108,7 +109,7 @@ func (c *command) params(msg slack.Msg) error {
 		if err != nil {
 			return err
 		}
-		for k, v := range hellperMessages {
+		for k, v := range c.message {
 			fields = append(fields, slack.AttachmentField{
 				Title: k,
 				Value: v,
@@ -130,8 +131,8 @@ func (c *command) params(msg slack.Msg) error {
 		if err != nil {
 			return err
 		}
-		for k := range hellperMessages {
-			delete(hellperMessages, k)
+		for k := range c.message {
+			delete(c.message, k)
 		}
 		c.slack.simpleMsg(msg, ":thumbsup: All problems fixed")
 

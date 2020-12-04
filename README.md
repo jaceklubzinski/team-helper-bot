@@ -17,16 +17,7 @@ docker compose [deployments/docker-compose.yml](deployments/docker-compose.yml) 
 HELPERBOT_SLACK_AUTH_TOKEN:
 ```
 # Supported slack command
-
-`del` del single row 
-```
-@bot del "single row"
-```
-`list` list all problems and solutions
-
-`fix` delete all problems
-
-`help` Help message
+`help` help message
 
 `add` add problem with possible solution
 ```
@@ -36,3 +27,12 @@ short:
 long: 
 @bot add "ProxySQL Error: Access denied for user" "recreate container"
 ```
+`list` list all problems and solutions
+
+`del` del single row 
+```
+@bot del "single row"
+```
+
+`fix-all` delete all problems
+

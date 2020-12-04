@@ -4,11 +4,13 @@ import (
 	"strings"
 )
 
-var hellperMessages = make(map[string]string)
+type helper struct {
+	message map[string]string
+}
 
 //hellper add slack thread response for popular problems
-func helper(msg string) string {
-	for matchWord, slackMsg := range hellperMessages {
+func (h *helper) match(msg string) string {
+	for matchWord, slackMsg := range h.message {
 		if strings.Contains(msg, matchWord) {
 			return slackMsg
 		}

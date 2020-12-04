@@ -8,12 +8,14 @@ import (
 )
 
 func TestCreateTable(t *testing.T) {
+	var problemHelper helper
+
 	dbClient, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer dbClient.Close()
-	db := newDB(dbClient)
+	db := newDB(dbClient, problemHelper)
 
 	mock.ExpectExec("CREATE TABLE").
 		WillReturnResult(sqlmock.NewResult(0, 1))
@@ -29,12 +31,14 @@ func TestCreateTable(t *testing.T) {
 }
 
 func TestDeleteAll(t *testing.T) {
+	var problemHelper helper
+
 	dbClient, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer dbClient.Close()
-	db := newDB(dbClient)
+	db := newDB(dbClient, problemHelper)
 
 	mock.ExpectExec("DELETE FROM helper").
 		WillReturnResult(sqlmock.NewResult(0, 1))
@@ -50,12 +54,14 @@ func TestDeleteAll(t *testing.T) {
 }
 
 func TestDeleteRow(t *testing.T) {
+	var problemHelper helper
+
 	dbClient, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer dbClient.Close()
-	db := newDB(dbClient)
+	db := newDB(dbClient, problemHelper)
 
 	title := "TestDel"
 
@@ -74,12 +80,14 @@ func TestDeleteRow(t *testing.T) {
 }
 
 func TestAddRow(t *testing.T) {
+	var problemHelper helper
+
 	dbClient, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer dbClient.Close()
-	db := newDB(dbClient)
+	db := newDB(dbClient, problemHelper)
 
 	title := "TestAdd"
 	desc := "TestDesc"
@@ -99,12 +107,15 @@ func TestAddRow(t *testing.T) {
 }
 
 func TestGetRow(t *testing.T) {
+	var problemHelper helper
+	problemHelper.message = make(map[string]string)
+
 	dbClient, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer dbClient.Close()
-	db := newDB(dbClient)
+	db := newDB(dbClient, problemHelper)
 
 	title := "TestGet"
 	desc := "TestDesc"
@@ -116,7 +127,7 @@ func TestGetRow(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when select helper table", err)
 	}
 
-	assert.Equal(t, hellperMessages[title], desc)
+	assert.Equal(t, problemHelper.message[title], desc)
 
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
