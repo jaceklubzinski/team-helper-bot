@@ -7,7 +7,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/sirupsen/logrus v1.7.0
-	github.com/slack-go/slack v0.6.6
+	github.com/slack-go/slack v0.9.0
 	github.com/stretchr/testify v1.2.2
 	honnef.co/go/tools v0.0.1-2020.1.5
 )
