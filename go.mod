@@ -9,5 +9,5 @@ require (
 	github.com/sirupsen/logrus v1.7.0
 	github.com/slack-go/slack v0.6.6
 	github.com/stretchr/testify v1.2.2
-	honnef.co/go/tools v0.0.1-2020.1.5
+	honnef.co/go/tools v0.3.0-0.dev
 )
