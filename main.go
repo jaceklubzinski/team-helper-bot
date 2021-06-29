@@ -2,11 +2,10 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"strings"
 
 	"github.com/kelseyhightower/envconfig"
+	log "github.com/sirupsen/logrus"
 	"github.com/slack-go/slack"
 )
 
@@ -20,16 +19,22 @@ func runDB() (helper, *store) {
 
 	dbClient, err := connectDB()
 	if err != nil {
-		log.Fatalf("Can't create database connection: %v", err)
+		log.WithFields(log.Fields{
+			"error": err,
+		}).Fatalln("Can't create database connection")
 	}
 	db := newDB(dbClient, problemHelper)
 	err = db.createTable()
 	if err != nil {
-		log.Fatalf("Can't create helper table: %v", err)
+		log.WithFields(log.Fields{
+			"error": err,
+		}).Fatalln("Can't create helper table")
 	}
 	err = db.getRow()
 	if err != nil {
-		log.Fatalf("Can't get rows from helper table: %v", err)
+		log.WithFields(log.Fields{
+			"error": err,
+		}).Fatalln("Can't get rows from helper table")
 	}
 	return problemHelper, db
 }
@@ -38,7 +43,6 @@ func runSlack(env envConfig) *slackClient {
 	api := slack.New(
 		env.SlackAuthToken,
 		slack.OptionDebug(false),
-		slack.OptionLog(log.New(os.Stdout, "slack-bot: ", log.Lshortfile|log.LstdFlags)),
 	)
 
 	rtm := api.NewRTM()
@@ -78,14 +82,18 @@ func main() {
 			if strings.Contains(msg.Text, "@"+s.slack.GetInfo().User.ID) {
 				err := commands.params(msg)
 				if err != nil {
-					fmt.Println("Can't execute bot command")
+					log.WithFields(log.Fields{
+						"error": err,
+					}).Warn("Can't execute bot command")
 				}
 			} else {
 				//catch-all reaction to response to greetings
 				if emoji := greetings(msg.Text); emoji != "" {
 					err = s.reaction(msg, emoji)
 					if err != nil {
-						fmt.Println("Can't add reaction")
+						log.WithFields(log.Fields{
+							"error": err,
+						}).Warn("Can't add reaction")
 					}
 				}
 
@@ -95,10 +103,10 @@ func main() {
 				}
 			}
 		case *slack.ConnectedEvent:
-			fmt.Println("Connected to Slack")
+			log.WithFields(log.Fields{}).Info("Connected to Slack")
 
 		case *slack.InvalidAuthEvent:
-			fmt.Println("Invalid token")
+			log.WithFields(log.Fields{}).Info("Invalid token")
 			return
 		}
 	}
