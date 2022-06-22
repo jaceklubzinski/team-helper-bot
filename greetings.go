@@ -71,6 +71,7 @@ func greetings(msg string) string {
 		"pig_hello_door",
 		"pikachu-hello",
 		"ahoj",
+		"dobre_ranko",
 		"pepe-witam",
 	}
 
