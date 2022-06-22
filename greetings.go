@@ -39,6 +39,8 @@ func greetings(msg string) string {
 		":hellohelloleft:":  true,
 		":hellohelloright:": true,
 		":hellohellowell:":  true,
+		":hello_there:":     true,
+		":pepe-witam:":      true,
 	}
 
 	slackGreetingsEmoji := []string{
@@ -68,6 +70,9 @@ func greetings(msg string) string {
 		"pig_hello2",
 		"pig_hello_door",
 		"pikachu-hello",
+		"ahoj",
+		"dobre_ranko",
+		"pepe-witam",
 	}
 
 	greetingsWord := strings.Split(strings.ToLower(msg), " ")
